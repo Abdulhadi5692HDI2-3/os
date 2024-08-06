@@ -4,6 +4,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "vga/write.h"
+#include "../external/printf/printf.h"
+
+void _putchar(char character) {
+    WritePut(character);
+}
 
 void SystemInitalize() {
     // initalize things
@@ -12,5 +17,5 @@ void SystemInitalize() {
 
 void kmain() {
     SystemInitalize();
-    WritePut('A');
+    printf("Hello world!\n");
 }
