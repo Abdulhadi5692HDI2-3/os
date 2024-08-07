@@ -1,6 +1,8 @@
 #include "idt.h"
 #include <stdbool.h>
 #include "pic.h"
+#include "../../../external/printf/printf.h"
+#include "pit.h"
 
 typedef struct {
     uint16_t IsrLow;
@@ -27,6 +29,28 @@ void ExceptionHandle(void) {
     __asm__ volatile ("hlt");
 }
 
+void IrqHandle(registers_t* regs) {
+    if (regs->int_no >= 40) {
+        outb(0xA0, 0x20);
+    }
+    outb(0x20, 0x20);
+    switch (regs->int_no) {
+        case 32: {
+            timer_callback();
+            break;
+        }
+        default: {
+            printf("unhandled irq\n");
+            break;
+        }
+    }
+}
+
+void IrqPITHandle() {
+    outb(0x20, 0x20);
+    timer_callback();
+}
+
 void IdtSetDescriptor(uint8_t vector, void* isr, uint8_t attributes) {
     IdtEntry* descriptor = &IDT[vector];
 
@@ -47,11 +71,11 @@ void IdtInit() {
 
     PIC_Remap(0x20, 0xA0);
 
-    for (uint8_t vector = 0; vector < 32; vector++) {
+    for (uint8_t vector = 0; vector < 47; vector++) {
         IdtSetDescriptor(vector, IsrStubTable[vector], 0x8E);
         vectors[vector] = true;
     }
-    
+
     __asm__ volatile ("lidt %0" : : "m"(Idtr));
     __asm__ volatile ("sti");
 }

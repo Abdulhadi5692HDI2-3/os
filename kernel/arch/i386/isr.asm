@@ -1,4 +1,6 @@
 extern ExceptionHandle
+extern IrqHandle
+extern IrqPITHandle
 
 %macro IsrErrStub 1
 IsrStub%+%1:
@@ -11,6 +13,32 @@ IsrStub%+%1:
     call ExceptionHandle
     iret
 %endmacro
+
+%macro IsrIrqStub 1
+IsrStub%+%1:
+    pusha
+
+    mov ax, ds
+    push eax
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    call IrqHandle
+    pop ebx
+    mov ds, bx
+    mov es, bx
+    mov fs, bx
+    mov gs, bx
+
+    popa
+    add esp, 8
+    iret
+%endmacro
+
 
 IsrNoErrStub 0
 IsrNoErrStub 1
@@ -44,11 +72,30 @@ IsrNoErrStub 28
 IsrNoErrStub 29
 IsrErrStub   30
 IsrNoErrStub 31
+; IsrIrqStub   32
+IsrStub32:
+    call IrqPITHandle
+    iret
+
+IsrIrqStub   33
+IsrIrqStub   34
+IsrIrqStub   35
+IsrIrqStub   36
+IsrIrqStub   37
+IsrIrqStub   38
+IsrIrqStub   39
+IsrIrqStub   40
+IsrIrqStub   41
+IsrIrqStub   42
+IsrIrqStub   43
+IsrIrqStub   44
+IsrIrqStub   45
+IsrIrqStub   46
 
 global IsrStubTable
 IsrStubTable:
 %assign i 0
-%rep 32
+%rep 47
     dd IsrStub%+i
 %assign i i+1
 %endrep

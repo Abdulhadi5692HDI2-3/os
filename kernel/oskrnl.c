@@ -6,6 +6,7 @@
 #include "vga/write.h"
 #include "../external/printf/printf.h"
 #include "arch/i386/gdt.h"
+#include "arch/i386/pit.h"
 #include "arch/i386/idt.h"
 
 void _putchar(char character) {
@@ -18,6 +19,7 @@ void SystemInitalize() {
     printf("[status] GDT LOADED!\n");
     IdtInit();
     printf("[status] IDT LOADED!\n");
+    //InitalizeTimer(50); // 50hz
     
 }
 
