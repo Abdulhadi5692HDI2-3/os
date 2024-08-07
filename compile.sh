@@ -7,5 +7,6 @@ i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel/vga/write.c -o kernel/write.
 i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel/serialio/io.c -o kernel/io.o
 i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel/arch/i386/gdt.c -o kernel/gdt.o
 i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel/arch/i386/idt.c -o kernel/idt.o
+i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel/arch/i386/pic.c -o kernel/pic.o
 i686-elf-gcc -std=gnu99 -ffreestanding -g -c external/printf/printf.c -o external/printf.o
-i686-elf-gcc -ffreestanding -nostdlib -g -T linker.ld boot/bootstrap.o kernel/oskrnl.o kernel/write.o kernel/io.o external/printf.o kernel/gdt.o kernel/gdtflush.o kernel/idt.o kernel/isr.o -o oskrnl.elf -lgcc
+i686-elf-gcc -ffreestanding -nostdlib -g -T linker.ld boot/bootstrap.o kernel/oskrnl.o kernel/write.o kernel/io.o external/printf.o kernel/gdt.o kernel/gdtflush.o kernel/idt.o kernel/isr.o kernel/pic.o -o oskrnl.elf -lgcc

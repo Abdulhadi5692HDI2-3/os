@@ -1,5 +1,6 @@
 #include "idt.h"
 #include <stdbool.h>
+#include "pic.h"
 
 typedef struct {
     uint16_t IsrLow;
@@ -44,11 +45,13 @@ void IdtInit() {
     Idtr.Base = (uintptr_t)&IDT[0];
     Idtr.Limit = (uint16_t)sizeof(IdtEntry) * 256 - 1;
 
+    PIC_Remap(0x20, 0xA0);
+
     for (uint8_t vector = 0; vector < 32; vector++) {
         IdtSetDescriptor(vector, IsrStubTable[vector], 0x8E);
         vectors[vector] = true;
     }
-
+    
     __asm__ volatile ("lidt %0" : : "m"(Idtr));
     __asm__ volatile ("sti");
 }
